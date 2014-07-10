@@ -34,18 +34,15 @@ public class WearVolumeService extends Service {
 		}
 
 		if (mNotificationManager == null) {
-			mNotificationManager = NotificationManagerCompat
-					.from(getApplicationContext());
+			mNotificationManager = NotificationManagerCompat.from(getApplicationContext());
 		}
 
 		if (intent != null) {
 
 			final String action = intent.getAction();
 
-			int maxVolumeIndex = mAudioManager
-					.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-			int volumeIndex = mAudioManager
-					.getStreamVolume(AudioManager.STREAM_MUSIC);
+			int maxVolumeIndex = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+			int volumeIndex = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
 			if (ACTION_VOLUME_INIT.equals(action)) {
 				updateNotification(volumeIndex);
@@ -58,29 +55,25 @@ public class WearVolumeService extends Service {
 
 				if (volumeIndex < maxVolumeIndex)
 					volumeIndex++;
-				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-						volumeIndex, 0);
+				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volumeIndex, 0);
 				updateNotification(volumeIndex);
 
 			} else if (ACTION_VOLUME_DOWN.equals(action)) {
 
 				if (volumeIndex > 0)
 					volumeIndex--;
-				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-						volumeIndex, 0);
+				mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volumeIndex, 0);
 				updateNotification(volumeIndex);
 
 			} else if (ACTION_MUTE_TOGGLE.equals(action)) {
 
 				if (mMuted) {
-					mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-							mPreMuteVolumeIndex, 0);
+					mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mPreMuteVolumeIndex, 0);
 					mMuted = !mMuted;
 					updateNotification(volumeIndex);
 				} else {
 					mPreMuteVolumeIndex = volumeIndex;
-					mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0,
-							0);
+					mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
 					mMuted = !mMuted;
 					updateNotification(0);
 				}
@@ -96,50 +89,37 @@ public class WearVolumeService extends Service {
 	private void updateNotification(int volumeIndex) {
 		NotificationCompat.WearableExtender wearableExtender = new WearableExtender();
 
-		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
-				getApplicationContext());
+		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext());
 		notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
 		notificationBuilder.setContentTitle("Wear Volume Control");
 		notificationBuilder.setContentText("Volume: " + volumeIndex);
-		wearableExtender.setBackground(BitmapFactory.decodeResource(
-				getResources(), R.drawable.wear_vol_background));
+		wearableExtender.setBackground(BitmapFactory.decodeResource(getResources(), R.drawable.wear_vol_background));
 		wearableExtender.setHintHideIcon(true);
 
 		// Stop service
-		Intent stopIntent = new Intent(getApplicationContext(),
-				WearVolumeService.class);
+		Intent stopIntent = new Intent(getApplicationContext(), WearVolumeService.class);
 		stopIntent.setAction(ACTION_DISMISS);
-		PendingIntent stopPendingIntent = PendingIntent.getService(this, 1,
-				stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent stopPendingIntent = PendingIntent.getService(this, 1, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		notificationBuilder.setDeleteIntent(stopPendingIntent);
 
 		// Volume up
-		Intent volUpIntent = new Intent(getApplicationContext(),
-				WearVolumeService.class);
+		Intent volUpIntent = new Intent(getApplicationContext(), WearVolumeService.class);
 		volUpIntent.setAction(ACTION_VOLUME_UP);
-		PendingIntent volUpPendingIntent = PendingIntent.getService(this, 1,
-				volUpIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		NotificationCompat.Action volUpAction = new NotificationCompat.Action.Builder(
-				R.drawable.ic_vol_up, "Volume Up", volUpPendingIntent).build();
+		PendingIntent volUpPendingIntent = PendingIntent.getService(this, 1, volUpIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		NotificationCompat.Action volUpAction = new NotificationCompat.Action.Builder(R.drawable.ic_vol_up, "Volume Up", volUpPendingIntent).build();
 		wearableExtender.addAction(volUpAction);
 
 		// Volume down
-		Intent volDownIntent = new Intent(getApplicationContext(),
-				WearVolumeService.class);
+		Intent volDownIntent = new Intent(getApplicationContext(), WearVolumeService.class);
 		volDownIntent.setAction(ACTION_VOLUME_DOWN);
-		PendingIntent volDownPendingIntent = PendingIntent.getService(this, 1,
-				volDownIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		NotificationCompat.Action volDownAction = new NotificationCompat.Action.Builder(
-				R.drawable.ic_vol_down, "Volume Down", volDownPendingIntent)
-				.build();
+		PendingIntent volDownPendingIntent = PendingIntent.getService(this, 1, volDownIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		NotificationCompat.Action volDownAction = new NotificationCompat.Action.Builder(R.drawable.ic_vol_down, "Volume Down", volDownPendingIntent).build();
 		wearableExtender.addAction(volDownAction);
 
 		// Mute
-		Intent muteIntent = new Intent(getApplicationContext(),
-				WearVolumeService.class);
+		Intent muteIntent = new Intent(getApplicationContext(), WearVolumeService.class);
 		muteIntent.setAction(ACTION_MUTE_TOGGLE);
-		PendingIntent mutePendingIntent = PendingIntent.getService(this, 1,
-				muteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent mutePendingIntent = PendingIntent.getService(this, 1, muteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		int muteDrawable;
 
@@ -149,14 +129,12 @@ public class WearVolumeService extends Service {
 			muteDrawable = R.drawable.ic_mute;
 		}
 
-		NotificationCompat.Action muteAction = new NotificationCompat.Action.Builder(
-				muteDrawable, "Toggle Mute", mutePendingIntent).build();
+		NotificationCompat.Action muteAction = new NotificationCompat.Action.Builder(muteDrawable, "Toggle Mute", mutePendingIntent).build();
 		wearableExtender.addAction(muteAction);
 
 		notificationBuilder.extend(wearableExtender);
 
-		mNotificationManager.notify(NOTIFICATION_ID,
-				notificationBuilder.build());
+		mNotificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
 	}
 
 	@Override
